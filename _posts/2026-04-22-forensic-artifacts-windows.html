@@ -1,0 +1,103 @@
+---
+layout: post
+title: "Windows Forensic Artifacts Every Analyst Should Know"
+subtitle: "A field guide to the files, registry keys, and logs that answer 'what happened on this machine?'"
+date: 2026-04-22 09:00:00 -0400
+background: '/img/posts/forensics.svg'
+tags: [forensics, DFIR, windows]
+---
+
+<p>
+  When a Windows machine is suspected of compromise, the answers are
+  almost always on disk — in registry hives, log files, and filesystem
+  artifacts. This post is a practical field guide to the artifacts I
+  reach for first in an investigation.
+</p>
+
+<h2 class="section-heading">1. Event Logs</h2>
+
+<p>
+  Windows Event Logs are the single richest source of forensic data. The
+  key channels:
+</p>
+
+<ul>
+  <li><strong>Security</strong> — logon events (4624, 4625), privilege use (4672), process creation (4688).</li>
+  <li><strong>System</strong> — service starts, driver loads, unexpected reboots.</li>
+  <li><strong>Microsoft-Windows-Sysmon/Operational</strong> — if deployed, gives you network connections, file hashes, and process lineage.</li>
+</ul>
+
+<p>
+  Always export logs with <code>wevtutil</code> or a proper forensic
+  tool — don't just copy the <code>.evtx</code> files, because the
+  records are tied to the originating system's channel configuration.
+</p>
+
+<h2 class="section-heading">2. Prefetch &amp; Amcache</h2>
+
+<p>
+  <code>C:\Windows\Prefetch\</code> contains <code>.pf</code> files that
+  record every executable that has run on the system, along with the
+  last execution time and run count. It's one of the fastest ways to
+  prove a binary was executed — even if the binary itself has been
+  deleted.
+</p>
+
+<p>
+  <code>C:\Windows\AppCompatPrograms\Amcache.hve</code> is a registry
+  hive that stores similar data, plus the full path and SHA-1 of the
+  executable. Cross-reference the two for a more complete picture.
+</p>
+
+<h2 class="section-heading">3. Shimcache &amp; BAM</h2>
+
+<p>
+  <strong>Shimcache</strong> (<code>SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache</code>)
+  records application compatibility lookups — effectively, a list of
+  executables that were run. <strong>BAM</strong> (Background Activity
+  Moderator) records the last execution time of user-launched programs.
+</p>
+
+<p>
+  Both survive binary deletion and are gold for timeline analysis.
+</p>
+
+<h2 class="section-heading">4. USB device history</h2>
+
+<p>
+  Three registry keys together tell you every USB device ever connected:
+</p>
+
+<ul>
+  <li><code>SYSTEM\CurrentControlSet\Enum\USBSTOR</strong> — device vendor/product IDs.</li>
+  <li><code>SYSTEM\CurrentControlSet\Enum\USB</strong> — VID/PID pairs.</li>
+  <li><code>SOFTWARE\Microsoft\Windows Portable Devices\Devices</strong> — friendly names and first/last connection times.</li>
+</ul>
+
+<h2 class="section-heading">5. Jump lists &amp; LNK files</h2>
+
+<p>
+  <strong>Jump lists</strong> (<code>%APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations</code>)
+  record files opened by a specific application. <strong>LNK files</strong>
+  (shortcuts in <code>Recent\</code>) record the target path, arguments,
+  and timestamps. Both are useful for reconstructing user activity.
+</p>
+
+<h2 class="section-heading">Putting it together</h2>
+
+<p>
+  A typical workflow:
+</p>
+
+<ol>
+  <li>Pull the Security log and filter for logon events around the incident window.</li>
+  <li>Check Prefetch and Amcache for suspicious executables.</li>
+  <li>Cross-reference Shimcache/BAM to confirm execution.</li>
+  <li>Look at USBSTOR to see if a new device was introduced.</li>
+  <li>Build a timeline from all of the above.</li>
+</ol>
+
+<p>
+  No single artifact tells the whole story. The power comes from
+  correlating them.
+</p>

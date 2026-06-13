@@ -1,0 +1,106 @@
+---
+layout: post
+title: "Cryptographic Mistakes I Keep Seeing in the Wild"
+subtitle: "Not the math — the implementation. Real bugs from real codebases."
+date: 2026-01-20 09:00:00 -0400
+background: '/img/posts/crypto.svg'
+tags: [crypto, code-review, secure-coding]
+---
+
+<p>
+  Cryptography is hard to get right — not because the math is difficult,
+  but because the implementation details are unforgiving. A single
+  off-by-one, a reused nonce, or a missing MAC can undo years of
+  peer-reviewed security.
+</p>
+
+<p>
+  This post catalogs the mistakes I see most often in real codebases.
+  None of these are theoretical; they've all shown up in production
+  systems I've audited.
+</p>
+
+<h2 class="section-heading">1. Reused nonces with AES-GCM</h2>
+
+<p>
+  AES-GCM is an AEAD cipher: it provides confidentiality and integrity.
+  But it depends on a unique nonce for every encryption under the same
+  key. Reuse a nonce, and an attacker can recover the authentication
+  key and forge messages.
+</p>
+
+<p>
+  The most common cause: using a counter that resets on restart, or
+  generating nonces with a PRNG that has a short period. The fix is
+  simple: use a 96-bit random nonce (collision probability is
+  negligible) or a monotonic counter that survives reboots.
+</p>
+
+<h2 class="section-heading">2. ECB mode</h2>
+
+<p>
+  Electronic Codebook mode encrypts each block independently. Identical
+  plaintext blocks produce identical ciphertext blocks. The classic
+  demonstration is the "ECB penguin" — an image encrypted with ECB is
+  still recognizable.
+</p>
+
+<p>
+  <strong>Never use ECB.</strong> Use CBC, CTR, or (preferably) an AEAD
+  mode like GCM or ChaCha20-Poly1305.
+</p>
+
+<h2 class="section-heading">3. Missing authentication</h2>
+
+<p>
+  Encryption without authentication is a recipe for disaster. If you
+  encrypt with AES-CBC but don't add a MAC, an attacker can flip bits
+  in the ciphertext and make predictable changes to the decrypted
+  plaintext. This is the basis of padding-oracle attacks.
+</p>
+
+<p>
+  The rule: <em>encrypt-then-MAC</em>. Encrypt the plaintext, then MAC
+  the ciphertext. Or better, use an AEAD mode that does both.
+</p>
+
+<h2 class="section-heading">4. Hardcoded keys</h2>
+
+<p>
+  I've seen encryption keys hardcoded in source code, compiled into
+  binaries, and stored in plaintext config files. The moment the source
+  or binary leaks, the encryption is useless.
+</p>
+
+<p>
+  Use a key management system (KMS) or, at minimum, load keys from
+  environment variables or a secrets manager. Rotate keys regularly.
+</p>
+
+<h2 class="section-heading">5. Weak random number generation</h2>
+
+<p>
+  <code>Math.random()</code> in JavaScript, <code>rand()</code> in C,
+  <code>java.util.Random</code> — none of these are cryptographically
+  secure. If you're generating nonces, keys, or tokens, you need a
+  CSPRNG: <code>crypto.getRandomValues()</code>,
+  <code>java.security.SecureRandom</code>, or <code>os.urandom()</code>.
+</p>
+
+<h2 class="section-heading">6. Timing side-channels</h2>
+
+<p>
+  A naive string comparison (<code>==</code>) short-circuits on the
+  first differing byte. An attacker can measure the response time to
+  learn how many bytes of a secret they've guessed correctly. The fix:
+  use a constant-time comparison function.
+</p>
+
+<h2 class="section-heading">The meta-lesson</h2>
+
+<p>
+  Don't roll your own crypto. Use a high-level library (libsodium,
+  Tink, WebCrypto) that makes the right thing the easy thing. If you
+  must use a lower-level primitive, read the documentation twice and
+  have someone else review your code.
+</p>

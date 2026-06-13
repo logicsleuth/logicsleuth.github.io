@@ -1,12 +1,17 @@
 ---
 layout: page
-title: Contact Me
-description: Have questions? I have answers.
-background: '/img/bg-contact.jpg'
+title: Contact
+description: Reach out — especially if you have a bug to report.
+background: '/img/bg-contact.svg'
 form: true
 ---
 
-<p>Want to get in touch? Fill out the form below to send me a message and I will get back to you as soon as possible!</p>
+<p>
+  Got a tip, a question, or a responsible-disclosure issue? Use the form
+  below, or email us directly. For sensitive reports, use PGP — send us
+  your key and we'll encrypt our replies.
+</p>
+
 <form name="sentMessage" id="contactForm" novalidate>
   <div class="control-group">
     <div class="form-group floating-label-form-group controls">
@@ -23,9 +28,9 @@ form: true
     </div>
   </div>
   <div class="control-group">
-    <div class="form-group col-xs-12 floating-label-form-group controls">
-      <label>Phone Number</label>
-      <input type="tel" class="form-control" placeholder="Phone Number" id="phone" required data-validation-required-message="Please enter your phone number.">
+    <div class="form-group floating-label-form-group controls">
+      <label>Subject</label>
+      <input type="text" class="form-control" placeholder="Subject" id="subject" required data-validation-required-message="Please enter a subject.">
       <p class="help-block text-danger"></p>
     </div>
   </div>

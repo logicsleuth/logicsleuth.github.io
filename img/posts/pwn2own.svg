@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0f1a24"/>
+      <stop offset="100%" stop-color="#05080c"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <g font-family="monospace" fill="#39ff14" opacity=".2" font-size="13">
+    <text x="80" y="200">[+] triggering UAF...</text>
+    <text x="80" y="230">[+] heap feng shui: OK</text>
+    <text x="80" y="260">[+] type confusion: OK</text>
+    <text x="80" y="290">[+] arbitrary R/W in renderer</text>
+    <text x="80" y="330">[+] IPC broker overflow: OK</text>
+    <text x="80" y="370">[+] shellcode executed</text>
+    <text x="80" y="410">$ whoami</text>
+    <text x="80" y="440">SYSTEM</text>
+  </g>
+  <g transform="translate(1150,350)">
+    <circle r="120" fill="none" stroke="#39ff14" stroke-width="1" opacity=".25"/>
+    <circle r="70" fill="none" stroke="#39ff14" stroke-width="1" opacity=".2"/>
+    <circle r="25" fill="#39ff14" opacity=".1"/>
+    <text x="-40" y="6" font-family="monospace" fill="#39ff14" font-size="22" opacity=".8">PWN</text>
+  </g>
+</svg>

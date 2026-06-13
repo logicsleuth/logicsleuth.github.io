@@ -1,5 +1,292 @@
-.btn-primary {
-  color: #fff;
-  background-color: #01313b;
-  border-color: #011f25;
+/* OwlEye — cybersecurity dark theme. Overrides the vendored Clean Blog CSS. */
+
+:root {
+  --bg:        #0a0f14;
+  --bg-alt:    #10171f;
+  --bg-card:   #141c26;
+  --border:    #1e2a38;
+  --fg:        #d0d7de;
+  --fg-muted:  #8b949e;
+  --accent:    #39ff14;
+  --accent-dim:#1fba00;
+  --warn:      #ffb020;
+  --danger:    #ff5370;
+  --link:      #58a6ff;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
 }
+
+html, body {
+  background: var(--bg);
+  color:      var(--fg);
+  font-family: var(--font-sans);
+}
+
+a {
+  color: var(--accent);
+  transition: color .15s ease, text-shadow .15s ease;
+}
+a:hover {
+  color: #fff;
+  text-shadow: 0 0 6px rgba(57, 255, 20, .6);
+}
+
+hr {
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- Masthead ---------- */
+.masthead {
+  position: relative;
+  background: #000 !important;
+  background-image:
+    linear-gradient(135deg, rgba(57,255,20,.06) 0%, transparent 60%),
+    linear-gradient(0deg, #0a0f14 0%, #05080c 100%) !important;
+  border-bottom: 1px solid var(--border);
+}
+.masthead::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(57,255,20,.03) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+.masthead .overlay { display: none; }
+.masthead .page-heading,
+.masthead .post-heading {
+  position: relative;
+  z-index: 1;
+}
+.masthead h1 {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .02em;
+  text-shadow: 0 0 18px rgba(57,255,20,.25);
+}
+.masthead .subheading,
+.masthead .meta {
+  color: var(--fg-muted);
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+  background: rgba(10,15,20,.92) !important;
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .82rem;
+}
+.navbar .navbar-brand {
+  font-weight: 700;
+  color: var(--accent) !important;
+  text-shadow: 0 0 8px rgba(57,255,20,.4);
+}
+.navbar .nav-link {
+  color: var(--fg-muted) !important;
+  transition: color .15s;
+}
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: var(--accent) !important;
+}
+.navbar-toggler {
+  color: var(--accent) !important;
+  border-color: var(--border) !important;
+}
+@media (max-width: 991.98px) {
+  .navbar { background: #0a0f14 !important; }
+}
+
+/* ---------- Cards / post previews ---------- */
+.post-preview {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-dim);
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+  transition: border-color .2s, box-shadow .2s;
+}
+.post-preview:hover {
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 0 1px rgba(57,255,20,.1), 0 0 18px rgba(57,255,20,.05);
+}
+.post-preview a {
+  color: var(--fg);
+  text-decoration: none;
+}
+.post-preview a:hover h2 {
+  color: var(--accent);
+}
+.post-preview .post-title {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 1.35rem;
+  margin-bottom: .25rem;
+}
+.post-preview .post-subtitle {
+  color: var(--fg-muted);
+  font-size: 1rem;
+  font-weight: 400;
+}
+.post-preview .post-meta {
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* ---------- Single post ---------- */
+article {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2rem;
+}
+article h2.section-heading {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: .5rem;
+  margin-top: 2rem;
+}
+article h3 { color: var(--fg); }
+article p, article li { color: var(--fg); line-height: 1.75; }
+article strong { color: var(--fg); }
+
+pre, code {
+  font-family: var(--font-mono);
+  font-size: .88rem;
+}
+pre {
+  background: #000 !important;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-dim);
+  color: var(--fg);
+  padding: 1rem 1.25rem;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+code {
+  color: var(--accent);
+  background: rgba(57,255,20,.08);
+  padding: .15rem .35rem;
+  border-radius: 3px;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+blockquote {
+  border-left: 3px solid var(--accent-dim);
+  background: rgba(57,255,20,.04);
+  color: var(--fg-muted);
+  padding: .75rem 1rem;
+  margin: 1rem 0;
+}
+
+.topic-list {
+  list-style: none;
+  padding: 0;
+}
+.topic-list li {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .5rem 0;
+  border-bottom: 1px dotted var(--border);
+  font-family: var(--font-mono);
+}
+.topic-list li i {
+  color: var(--accent);
+  width: 1.25rem;
+  text-align: center;
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  color: #000;
+  background: var(--accent);
+  border-color: var(--accent);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  border-radius: 3px;
+  transition: all .15s;
+}
+.btn-primary:hover,
+.btn-primary:focus {
+  color: #000;
+  background: #6bff4d;
+  border-color: #6bff4d;
+  box-shadow: 0 0 12px rgba(57,255,20,.4);
+}
+
+/* ---------- Footer ---------- */
+footer {
+  background: var(--bg-alt);
+  border-top: 1px solid var(--border);
+}
+footer .fa-stack .fa-circle { color: var(--border); }
+footer .fa-stack .fa-inverse { color: var(--accent); }
+footer .copyright {
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: .78rem;
+}
+
+/* ---------- Pager ---------- */
+.pager .btn-primary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+}
+.pager .btn-primary:hover {
+  background: rgba(57,255,20,.08);
+  box-shadow: 0 0 8px rgba(57,255,20,.3);
+}
+
+/* ---------- Contact form ---------- */
+.form-control {
+  background: var(--bg-card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+}
+.form-control:focus {
+  background: var(--bg-card);
+  color: var(--fg);
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 0 2px rgba(57,255,20,.15);
+}
+.floating-label-form-group label {
+  color: var(--fg-muted);
+}
+
+/* ---------- Typography polish ---------- */
+h1, h2, h3 { color: var(--fg); }
+h4, h5, h6 { color: var(--fg); }
+p.lead {
+  color: var(--fg-muted);
+  font-size: 1.1rem;
+}
+
+/* Selection */
+::selection {
+  background: var(--accent);
+  color: #000;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }

@@ -1,0 +1,86 @@
+---
+layout: post
+title: "A Pwn2Own Tale: Chaining Bugs to Own a Browser in Four Hours"
+subtitle: "Notes from a team that went from zero-day to shell at this year's contest."
+date: 2026-05-15 09:00:00 -0400
+background: '/img/posts/pwn2own.svg'
+tags: [browser, exploit, CVE]
+---
+
+<p>
+  Pwn2Own is the premier desktop-and-browser exploitation contest: vendors
+  ship their latest builds, researchers show up with zero-days, and
+  whoever chains the most bugs in the shortest time takes home the prize
+  — and the laptop.
+</p>
+
+<p>
+  This post is a sanitized version of our team's run at the most recent
+  edition. We'll cover the bugs we used, the chain we built, and the
+  lessons we learned. No unpatched vulnerabilities are discussed.
+</p>
+
+<h2 class="section-heading">The target</h2>
+
+<p>
+  We targeted a major browser with a two-bug chain: a renderer sandbox
+  escape, followed by a kernel-level privilege escalation. The renderer
+  bug was a use-after-free in the JavaScript engine; the kernel bug was
+  a logic error in the IPC broker.
+</p>
+
+<h2 class="section-heading">Bug one: renderer escape</h2>
+
+<p>
+  The UAF lived in the JIT compiler's handling of a specific
+  <code>Array.prototype</code> pattern. By carefully shaping the heap,
+  we could get the JIT to emit code that dereferenced a freed object,
+  giving us a controlled type confusion and, eventually, arbitrary
+  read/write in the renderer process.
+</p>
+
+<pre><code>// Simplified trigger — not the real exploit
+let a = new Array(0x100);
+let b = a.map(x => ({x}));
+// After GC, one of the objects is freed but still referenced
+// by a stale pointer in the JIT'd code.</code></pre>
+
+<h2 class="section-heading">Bug two: sandbox escape</h2>
+
+<p>
+  With arbitrary R/W in the renderer, we needed to break out. The
+  browser's sandbox relies on a broker process that validates IPC
+  messages. We found that one of the broker's message handlers didn't
+  check the size of an embedded buffer, allowing a heap overflow in the
+  broker itself — which runs with medium integrity.
+</p>
+
+<h2 class="section-heading">Putting it together</h2>
+
+<ol>
+  <li>Serve a page that triggers the UAF.</li>
+  <li>Use the type confusion to leak a <code>WebAssembly</code> module's backing store.</li>
+  <li>Overwrite a vtable pointer to gain code execution in the renderer.</li>
+  <li>From the renderer, send a malformed IPC message to the broker.</li>
+  <li>Overflow the broker's heap, hijack control flow, and run shellcode.</li>
+</ol>
+
+<p>
+  Total time from first test to reliable shell: four hours. Most of that
+  was spent on heap shaping — the bugs themselves were straightforward
+  once we understood the code paths.
+</p>
+
+<h2 class="section-heading">Lessons learned</h2>
+
+<ul>
+  <li><strong>Read the source first.</strong> We spent two days reading the IPC broker before we found the bug. The actual exploit took an afternoon.</li>
+  <li><strong>Automate heap shaping.</strong> Manual heap feng shui is slow. Write a script that tries thousands of layouts.</li>
+  <li><strong>Test on a clean image.</strong> Contest environments are locked down. Test on a vanilla VM first.</li>
+</ul>
+
+<p>
+  Pwn2Own is a reminder that even the best-engineered software has
+  seams. The goal isn't to shame vendors — it's to make exploitation
+  harder and detection easier, one bug at a time.
+</p>

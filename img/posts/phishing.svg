@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0f1a24"/>
+      <stop offset="100%" stop-color="#05080c"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <g font-family="monospace" fill="#39ff14" opacity=".18" font-size="12">
+    <text x="60" y="120">From: security@micros0ft.com</text>
+    <text x="60" y="150">Subject: Urgent: Verify your account</text>
+    <text x="60" y="190">&lt;a href="http://micr0soft-login.xyz/auth"&gt;</text>
+    <text x="60" y="230">&lt;form method="POST" action="collect.php"&gt;</text>
+    <text x="60" y="270">&lt;input type="password" name="pwd"&gt;</text>
+    <text x="60" y="310">&lt;?php file_put_contents('hits.txt'... ?&gt;</text>
+  </g>
+  <g transform="translate(1100,400)">
+    <path d="M -200 -120 L 200 -120 L 200 120 L -200 120 Z" fill="none" stroke="#39ff14" stroke-width="1" opacity=".3"/>
+    <path d="M -200 -80 L 200 -80" stroke="#39ff14" stroke-width="1" opacity=".15"/>
+    <path d="M -200 -40 L 200 -40" stroke="#39ff14" stroke-width="1" opacity=".1"/>
+    <text x="-180" y="-100" font-family="monospace" fill="#39ff14" font-size="12" opacity=".6">RE: ACCOUNT</text>
+    <text x="-180" y="-55" font-family="monospace" fill="#39ff14" font-size="12" opacity=".5">Dear user,</text>
+    <text x="-180" y="-20" font-family="monospace" fill="#39ff14" font-size="12" opacity=".5">Click here to verify...</text>
+    <text x="-180" y="20" font-family="monospace" fill="#39ff14" font-size="11" opacity=".4">http://micr0soft-login.xyz</text>
+    <text x="-180" y="70" font-family="monospace" fill="#ffb020" font-size="11" opacity=".8">⚠ phishing detected</text>
+  </g>
+</svg>

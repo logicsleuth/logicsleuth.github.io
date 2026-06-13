@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0f1a24"/>
+      <stop offset="100%" stop-color="#05080c"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e2a38" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <rect width="1600" height="900" fill="url(#grid)" opacity=".5"/>
+  <g font-family="monospace" fill="#39ff14" opacity=".22" font-size="13">
+    <text x="80" y="140">-----BEGIN PGP PUBLIC KEY BLOCK-----</text>
+    <text x="80" y="170">mQENBFk2hKABCAC7+4n8gQZ2Yl...</text>
+    <text x="80" y="200">kQH8zVFj8oFB8t4p+L0e...</text>
+    <text x="80" y="230">-----END PGP PUBLIC KEY BLOCK-----</text>
+    <text x="80" y="290">Fingerprint: 41DE 7A2C 9B01 ... 3F12</text>
+    <text x="80" y="340">uid: OwlEye Research &lt;contact@owleye.io&gt;</text>
+    <text x="80" y="400">sig  sig  2026-01-15  [expires: 2028-01-15]</text>
+  </g>
+  <g transform="translate(1050,200)">
+    <circle r="140" fill="none" stroke="#39ff14" stroke-width="1" opacity=".2"/>
+    <circle r="90" fill="none" stroke="#39ff14" stroke-width="1" opacity=".15"/>
+    <circle r="40" fill="#39ff14" opacity=".06"/>
+    <path d="M -60 0 L -30 -40 L 30 -40 L 60 0 L 30 40 L -30 40 Z" fill="none" stroke="#39ff14" stroke-width="1.5" opacity=".5"/>
+    <text x="-28" y="6" font-family="monospace" fill="#39ff14" font-size="14" opacity=".8">OWL</text>
+  </g>
+</svg>

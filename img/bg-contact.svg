@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0f1a24"/>
+      <stop offset="100%" stop-color="#05080c"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e2a38" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <rect width="1600" height="900" fill="url(#grid)" opacity=".5"/>
+  <g font-family="monospace" fill="#39ff14" opacity=".2" font-size="13">
+    <text x="80" y="160">$ echo "contact@owleye.io" | gpg --encrypt</text>
+    <text x="80" y="200">-----BEGIN PGP MESSAGE-----</text>
+    <text x="80" y="230">hQEMA1234ABCD...</text>
+    <text x="80" y="260">=aBcD</text>
+    <text x="80" y="290">-----END PGP MESSAGE-----</text>
+    <text x="80" y="360">$ nc -lvp 4444</text>
+    <text x="80" y="400">Listening on 0.0.0.0 4444</text>
+    <text x="80" y="440">Connection received on 10.0.0.1 54321</text>
+    <text x="80" y="500">$ openssl req -x509 -newkey rsa:4096</text>
+    <text x="80" y="540">Generating RSA private key (4096 bit)</text>
+    <text x="80" y="580">-----</text>
+  </g>
+  <g transform="translate(1100,350)">
+    <rect x="-120" y="-80" width="240" height="160" rx="6" fill="none" stroke="#39ff14" stroke-width="1" opacity=".3"/>
+    <line x1="-120" y1="-40" x2="120" y2="-40" stroke="#39ff14" stroke-width="1" opacity=".2"/>
+    <text x="-100" y="-55" font-family="monospace" fill="#39ff14" font-size="12" opacity=".6">ENCRYPTED</text>
+    <text x="-100" y="-10" font-family="monospace" fill="#39ff14" font-size="11" opacity=".5">To: OwlEye</text>
+    <text x="-100" y="20" font-family="monospace" fill="#39ff14" font-size="11" opacity=".5">Key: 41DE 7A2C</text>
+    <text x="-100" y="50" font-family="monospace" fill="#39ff14" font-size="11" opacity=".5">AES-256-GCM</text>
+  </g>
+</svg>

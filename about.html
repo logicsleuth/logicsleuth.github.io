@@ -1,12 +1,44 @@
 ---
 layout: page
-title: About Me
-description: This is what I do.
-background: '/img/bg-about.jpg'
+title: About
+description: Who runs this site and why.
+background: '/img/bg-about.svg'
 ---
 
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed quisquam ut perspiciatis, repudiandae nulla animi iste vel, praesentium repellendus molestias aliquid consequatur, earum rem qui error voluptates eius enim consequuntur!</p>
+<p>
+  <strong>OwlEye</strong> is an independent cybersecurity blog. The name is a
+  nod to the wide-eyed watching that security work demands — and to the
+  fact that most breaches are visible long before they're exploited, if
+  you know where to look.
+</p>
 
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ex alias, earum consectetur quia natus ducimus voluptate explicabo, hic porro reprehenderit, quasi? Tenetur ipsum distinctio laboriosam perspiciatis officiis dolore, architecto id.</p>
+<p>
+  This site exists to publish research that is useful, accurate, and
+  actionable. Every post is written by hands-on practitioners: CTF players,
+  reverse engineers, detection engineers, and sysadmins who got curious
+  about a bug and followed it to the root cause.
+</p>
 
-<p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam inventore aspernatur repellendus incidunt adipisci modi voluptates recusandae iste eligendi, repudiandae corporis quod aut, optio! Explicabo quaerat unde voluptatem! Itaque, eum!</p>
+<h2 class="section-heading">What we publish</h2>
+
+<ul>
+  <li><strong>CTF writeups</strong> — full walkthroughs with the dead ends included, not just the flag.</li>
+  <li><strong>Threat analysis</strong> — breakdowns of real-world malware, phishing campaigns, and exploit chains.</li>
+  <li><strong>Tool deep-dives</strong> — when existing tools aren't enough and you need to read the source.</li>
+  <li><strong>Defensive guides</strong> — detection rules, hardening checklists, and post-incident playbooks.</li>
+</ul>
+
+<h2 class="section-heading">Responsible disclosure</h2>
+
+<p>
+  We follow coordinated disclosure. If you're a vendor and something on
+  this site touches one of your products, reach out — we'll work with you
+  to confirm, reproduce, and remediate before anything is published.
+</p>
+
+<h2 class="section-heading">Contact</h2>
+
+<p>
+  Email: <a href="mailto:{{ site.email | encode_email }}">contact [at] owleye [dot] io</a><br>
+  PGP key: available on request for sensitive disclosures.
+</p>

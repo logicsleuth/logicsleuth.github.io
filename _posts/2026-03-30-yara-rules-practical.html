@@ -1,0 +1,106 @@
+---
+layout: post
+title: "Writing YARA Rules That Actually Work"
+subtitle: "Practical tips for detection engineering with YARA — beyond the tutorial."
+date: 2026-03-30 09:00:00 -0400
+background: '/img/posts/yara.svg'
+tags: [yara, detection, malware-analysis]
+---
+
+<p>
+  YARA is the de facto standard for malware classification and detection.
+  It's powerful, but most tutorials stop at "write a string, match a
+  file." Real-world YARA rules need to be fast, specific, and
+  maintainable — and that takes more than string matching.
+</p>
+
+<h2 class="section-heading">Start with the stable artifacts</h2>
+
+<p>
+  The best YARA rules target things that are hard for an attacker to
+  change without breaking the malware:
+</p>
+
+<ul>
+  <li>Import hashes (imphash)</li>
+  <li>Rich header checksums and timestamps</li>
+  <li>Hardcoded encryption keys or magic bytes</li>
+  <li>Structural invariants (section names, entry-point patterns)</li>
+</ul>
+
+<p>
+  Avoid matching on things that change every build: variable-length
+  strings, stack-based buffers, or compiler-generated stubs.
+</p>
+
+<h2 class="section-heading">Use conditions, not just strings</h2>
+
+<p>
+  A rule with ten strings and no condition is a false-positive machine.
+  Conditions let you express relationships:
+</p>
+
+<pre><code>rule CobaltStrike_Beacon {
+    meta:
+        author  = "OwlEye"
+        desc    = "CobaltStrike beacon (x64)"
+        date    = "2026-03-30"
+
+    strings:
+        $s1 = "beacon" ascii
+        $s2 = "kernel32.dll" ascii
+        $hex = { 4D 5A 90 00 03 00 00 00 04 00 00 00 FF FF }
+
+    condition:
+        uint16(0) == 0x5A4D and
+        filesize < 5MB and
+        $hex at 0 and
+        any of ($s*)
+}</code></pre>
+
+<h2 class="section-heading">Performance matters</h2>
+
+<p>
+  YARA is fast, but a bad rule can still slow a scan to a crawl. Tips:
+</p>
+
+<ul>
+  <li>Anchor strings with <code>at</code> or <code>in (N..M)</code> when you know the offset.</li>
+  <li>Use <code>uint16(0) == 0x5A4D</code> as an early-exit for PE files.</li>
+  <li>Prefer <code>ascii</code> over <code>wide</code> when you don't need both.</li>
+  <li>Test against a clean corpus — if your rule hits Notepad, it's too broad.</li>
+</ul>
+
+<h2 class="section-heading">Organize for maintenance</h2>
+
+<p>
+  A flat directory of 500 rules is a nightmare. Organize by family or
+  campaign, and use a shared <code>common.yar</code> file for reusable
+  modules:
+</p>
+
+<pre><code>rules/
+  common/
+    pe_constants.yar
+    crypto_signatures.yar
+  families/
+    cobalt_strike.yar
+    mimikatz.yar
+    qakbot.yar
+  campaigns/
+    apt29_2026.yar</code></pre>
+
+<p>
+  Version-control your rules. Write a CI job that lints them with
+  <code>yara --print-module-data</code> and runs them against a clean
+  baseline to catch regressions.
+</p>
+
+<h2 class="section-heading">When YARA isn't enough</h2>
+
+<p>
+  YARA is a signature tool, not a behavioral one. For fileless malware,
+  living-off-the-land techniques, or in-memory-only payloads, you need
+  ETW, Sysmon, or eBPF. Use YARA as one layer in a defense-in-depth
+  detection stack — not the whole stack.
+</p>

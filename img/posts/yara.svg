@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#0f1a24"/>
+      <stop offset="100%" stop-color="#05080c"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <g font-family="monospace" fill="#39ff14" opacity=".22" font-size="12">
+    <text x="80" y="160">rule CobaltStrike_Beacon {</text>
+    <text x="80" y="190">  meta: author="OwlEye"</text>
+    <text x="80" y="220">  strings: $s = "beacon"</text>
+    <text x="80" y="250">  condition: $s and filesize &lt; 5MB</text>
+    <text x="80" y="280">}</text>
+    <text x="80" y="330">$ yara rules.yar /tmp/</text>
+    <text x="80" y="360">CobaltStrike_Beacon /tmp/sample.bin</text>
+  </g>
+  <g transform="translate(1100,350)">
+    <polygon points="0,-120 100,60 -100,60" fill="none" stroke="#39ff14" stroke-width="1" opacity=".3"/>
+    <text x="-20" y="10" font-family="monospace" fill="#39ff14" font-size="18" opacity=".8">YARA</text>
+  </g>
+</svg>

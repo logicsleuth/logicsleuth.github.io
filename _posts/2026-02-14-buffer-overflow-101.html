@@ -1,0 +1,110 @@
+---
+layout: post
+title: "Buffer Overflows 101: From 'Hello World' to Code Execution"
+subtitle: "A beginner-friendly walkthrough of stack-based overflows on x86-64 Linux."
+date: 2026-02-14 09:00:00 -0400
+background: '/img/posts/bof.svg'
+tags: [pwn, binary-exploitation, tutorial]
+---
+
+<p>
+  Buffer overflows are the oldest class of memory-safety bugs — and still
+  among the most common. This post walks through a classic
+  stack-based overflow on x86-64 Linux, from vulnerable code to a
+  working exploit. No prior exploitation experience required.
+</p>
+
+<h2 class="section-heading">The vulnerable program</h2>
+
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+void greet(char *name) {
+    char buf[64];
+    strcpy(buf, name);          // no bounds check
+    printf("Hello, %s!\n", buf);
+}
+
+int main(int argc, char **argv) {
+    if (argc != 2) return 1;
+    greet(argv[1]);
+    return 0;
+}</code></pre>
+
+<p>
+  <code>strcpy</code> copies until it hits a null byte — it doesn't care
+  how big <code>buf</code> is. If we pass more than 64 bytes, we start
+  overwriting the stack frame above <code>buf</code>.
+</p>
+
+<h2 class="section-heading">The stack layout</h2>
+
+<p>
+  On x86-64, the stack grows downward. Inside <code>greet</code>, the
+  layout looks like this (addresses decrease downward):
+</p>
+
+<pre><code>  +------------------+  high address
+  |  return address  |  ← where greet returns to
+  +------------------+
+  |  saved RBP       |  ← frame pointer
+  +------------------+
+  |  buf[63..0]      |  ← our 64-byte buffer
+  +------------------+  low address (RSP)</code></pre>
+
+<p>
+  If we write past <code>buf</code>, we overwrite the saved RBP first,
+  then the return address. Control the return address, control the
+  program.
+</p>
+
+<h2 class="section-heading">Crafting the exploit</h2>
+
+<p>
+  We need 64 bytes of padding + 8 bytes for saved RBP + the address we
+  want to jump to. Let's jump to a <code>win</code> function that spawns
+  a shell:
+</p>
+
+<pre><code>def exploit():
+    padding = b"A" * 64          # fill buf
+    padding += b"B" * 8          # overwrite saved RBP
+    padding += p64(win_addr)     # overwrite return address
+    padding += p64(ret_gadget)   # stack alignment (16-byte)
+    return padding</code></pre>
+
+<p>
+  We add a <code>ret</code> gadget (a single <code>ret</code>
+  instruction) before <code>win_addr</code> because the x86-64 ABI
+  requires the stack to be 16-byte aligned at a <code>call</code>
+  instruction. Without it, <code>movaps</code> inside
+  <code>system()</code> will segfault.
+</p>
+
+<h2 class="section-heading">Mitigations and how to bypass them</h2>
+
+<p>
+  Modern systems have several mitigations that make this harder:
+</p>
+
+<ul>
+  <li><strong>ASLR</strong> — randomizes stack/heap/libc addresses. Leak an address first.</li>
+  <li><strong>Stack canary</strong> — a random value before the return address. Leak it or brute-force it.</li>
+  <li><strong>NX/DEP</strong> — stack is non-executable. Use ROP or ret2libc.</li>
+  <li><strong>PIE</strong> — randomizes the binary's base address. Leak a code address.</li>
+</ul>
+
+<p>
+  Each mitigation raises the bar, but none eliminates the underlying
+  bug. The real fix is to use bounds-checked functions
+  (<code>strncpy</code>, <code>snprintf</code>) or a memory-safe
+  language.
+</p>
+
+<h2 class="section-heading">Further reading</h2>
+
+<ul>
+  <li><em>Hacking: The Art of Exploitation</em> — Jon Erickson</li>
+  <li>CTF resources: <a href="pwnable.kr">pwnable.kr</a>, <a href="pwnable.tw">pwnable.tw</a></li>
+  <li>LiveOverflow's binary exploitation video series</li>
+</ul>
